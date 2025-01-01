@@ -1,0 +1,8 @@
+go mod init <url github>
+go get -u github.com/gin-gonic/gin
+get github.com/graphql-go/graphql
+go get github.com/graphql-go/handler
+go get github.com/joho/godotenv
+go get -u github.com/go-sql-driver/mysql
+go get -u gorm.io/gen
+
