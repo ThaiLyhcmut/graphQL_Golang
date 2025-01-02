@@ -31,11 +31,15 @@ func main() {
 		handler := handler.New(&handler.Config{
 			Schema: graphql_config.Config(),
 		})
+		// Kiểm tra xem "account" có trong context không
+		account, exists := c.Get("account")
+		if exists {
+			// Tạo context mới và truyền thông tin tài khoản vào nếu có
+			ctx := context.WithValue(c.Request.Context(), "account", account)
+			c.Request = c.Request.WithContext(ctx)
+		}
 
-		// Tạo context mới và truyền thông tin tài khoản vào
-		ctx := context.WithValue(c.Request.Context(), "account", c.MustGet("account"))
-		c.Request = c.Request.WithContext(ctx)
-
+		// Tiến hành xử lý GraphQL request
 		handler.ServeHTTP(c.Writer, c.Request)
 	})
 

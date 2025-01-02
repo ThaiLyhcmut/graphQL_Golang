@@ -14,5 +14,12 @@ var rootQuery = graphql.ObjectConfig{
 			Type:    schemas.AccountType,
 			Resolve: resolvers.GetAccountResolver,
 		},
+		"getCategory": &graphql.Field{
+			Type: graphql.NewList(schemas.CategoryType),
+			Args: graphql.FieldConfigArgument{
+				"categoryID": &graphql.ArgumentConfig{Type: graphql.String},
+			},
+			Resolve: resolvers.GetCategoryResolver,
+		},
 	},
 }

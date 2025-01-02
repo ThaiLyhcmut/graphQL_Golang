@@ -62,6 +62,7 @@ func RegisterAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 		FullName: fullName,
 		Email:    email,
 		Password: password,
+		Status:   "active",
 	}
 	fmt.Println(account)
 	resultAccount := configs.GetDB().Create(&account)
@@ -174,8 +175,13 @@ func CreateOtpResolver(p graphql.ResolveParams) (interface{}, error) {
 	if resultOTP.Error != nil {
 		return nil, fmt.Errorf("Tạo mã OTP không thành công")
 	}
+	err := helper.SendMail(email, "Mã OTP", otp)
+	if err != nil {
+		return nil, fmt.Errorf("Gửi mail không thành công")
+	}
 	return map[string]interface{}{
 		"code": 200,
 		"msg":  "Create OTP success",
 	}, nil
+
 }
