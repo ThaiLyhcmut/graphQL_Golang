@@ -19,3 +19,11 @@ var ProductType = graphql.NewObject(graphql.ObjectConfig{
 		"featured":        &graphql.Field{Type: graphql.String},
 	},
 })
+
+var ProductInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "ProductInput",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"offset": &graphql.InputObjectFieldConfig{Type: graphql.Int},
+		"limit":  &graphql.InputObjectFieldConfig{Type: graphql.Int},
+	},
+})

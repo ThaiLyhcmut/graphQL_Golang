@@ -18,7 +18,10 @@ var CategoryType = graphql.NewObject(graphql.ObjectConfig{
 		"deleted":     &graphql.Field{Type: graphql.String},
 		"slug":        &graphql.Field{Type: graphql.String},
 		"product": &graphql.Field{
-			Type:    graphql.NewList(ProductType),
+			Type: graphql.NewList(ProductType),
+			Args: graphql.FieldConfigArgument{
+				"ProductInput": &graphql.ArgumentConfig{Type: ProductInput},
+			},
 			Resolve: resolvers.GetProductByCategory,
 		},
 	},

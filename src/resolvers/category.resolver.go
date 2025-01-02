@@ -29,13 +29,23 @@ func GetCategoryResolver(p graphql.ResolveParams) (interface{}, error) {
 }
 
 func GetProductByCategory(p graphql.ResolveParams) (interface{}, error) {
+	productInput, ok := p.Args["ProductInput"].(map[string]interface{})
+	offset, limit := 0, 10
+	if ok {
+		if offsetVal, ok := productInput["offset"].(int); ok {
+			offset = offsetVal
+		}
+		if limitVal, ok := productInput["limit"].(int); ok {
+			limit = limitVal
+		}
+	}
 	category, ok := p.Source.(models.Category)
 	if !ok {
 		return nil, fmt.Errorf("invalid category source")
 	}
 	categoryID := category.ID
 	var products []models.Product
-	result := configs.DB.Where("CategoryID = ?", categoryID).Find(&products)
+	result := configs.DB.Where("CategoryID = ?", categoryID).Limit(limit).Offset(offset).Find(&products)
 	if result.Error != nil {
 		return nil, result.Error
 	}
