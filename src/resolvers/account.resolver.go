@@ -13,11 +13,11 @@ import (
 func GetAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 	accountInterface := p.Context.Value("account")
 	if accountInterface == nil {
-		return nil, fmt.Errorf("Vui lòng đăng nhập")
+		return nil, fmt.Errorf("vui lòng đăng nhập")
 	}
 	account, ok := accountInterface.(models.Account)
 	if !ok {
-		return nil, fmt.Errorf("Tạo tài khoảng không thành côngcông")
+		return nil, fmt.Errorf("tạo tài khoảng không thành công")
 	}
 
 	fmt.Println(account)
@@ -39,11 +39,11 @@ func GetAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 func RegisterAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 	accountArgs, ok := p.Args["account"].(map[string]interface{})
 	if !ok {
-		return nil, fmt.Errorf("Giá trị đầu vàovào không hợp lệ")
+		return nil, fmt.Errorf("giá trị đầu vào không hợp lệ")
 	}
 	otp, otpOK := accountArgs["otp"].(string)
 	if !otpOK {
-		return nil, fmt.Errorf("Mã OTP không cócó lệ")
+		return nil, fmt.Errorf("mã OTP không hợp lệ")
 	}
 
 	fullName, fullNameOK := accountArgs["fullName"].(string)
@@ -53,10 +53,10 @@ func RegisterAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 	var otpModel = models.Otp{}
 	resultOTP := configs.GetDB().Where("code = ? AND email = ?", otp, email).First(&otpModel)
 	if resultOTP.Error != nil {
-		return nil, fmt.Errorf("Mã OTP không hợp lệ")
+		return nil, fmt.Errorf("mã OTP không hợp lệ")
 	}
 	if !fullNameOK || !emailOK || !passwordOK {
-		return nil, fmt.Errorf("Tên, email hoặc mật khẩu không hợp lệ")
+		return nil, fmt.Errorf("tên, email hoặc mật khẩu không hợp lệ")
 	}
 	account := models.Account{
 		FullName: fullName,
@@ -67,12 +67,12 @@ func RegisterAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 	fmt.Println(account)
 	resultAccount := configs.GetDB().Create(&account)
 	if resultAccount.Error != nil {
-		return nil, fmt.Errorf("Đăng ký không thành công")
+		return nil, fmt.Errorf("đăng ký không thành công")
 	}
 	token := helper.CreateJWT(account.ID)
 	resultOTP = configs.GetDB().Delete(&otpModel)
 	if resultOTP.Error != nil {
-		return nil, fmt.Errorf("Xóa mã OTP không thành công")
+		return nil, fmt.Errorf("xóa mã OTP không thành công")
 	}
 	return map[string]interface{}{
 		"id":       account.ID,
@@ -92,7 +92,7 @@ func RegisterAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 func LoginAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 	accountArgs, ok := p.Args["account"].(map[string]interface{})
 	if !ok {
-		return nil, fmt.Errorf("Chưa nhập email hoặc mật khẩu")
+		return nil, fmt.Errorf("chưa nhập email hoặc mật khẩu")
 	}
 	email, emailOK := accountArgs["email"].(string)
 	password, passwordOK := accountArgs["password"].(string)
@@ -127,21 +127,21 @@ func LoginAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 func UpdateAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 	accountInterface := p.Context.Value("account")
 	if accountInterface == nil {
-		return nil, fmt.Errorf("Vui lòng đăng nhậpnhập")
+		return nil, fmt.Errorf("vui lòng đăng nhập")
 	}
 	account, ok := accountInterface.(models.Account)
 	if !ok {
-		return nil, fmt.Errorf("Lỗi không xác định")
+		return nil, fmt.Errorf("lỗi không xác định")
 	}
 
 	accountArgs, ok := p.Args["account"].(map[string]interface{})
 	if !ok {
-		return nil, fmt.Errorf("Giá trị đầu vào không hợp lệ")
+		return nil, fmt.Errorf("giá trị đầu vào không hợp lệ")
 	}
 	accountArgs["id"] = account.ID
 	result := configs.GetDB().Model(&models.Account{}).Where("id = ?", account.ID).Updates(accountArgs)
 	if result.Error != nil {
-		return nil, fmt.Errorf("Cập nhật không thành công")
+		return nil, fmt.Errorf("cập nhật không thành công")
 	}
 	return map[string]interface{}{
 		"id":       account.ID,
@@ -159,11 +159,11 @@ func UpdateAccountResolver(p graphql.ResolveParams) (interface{}, error) {
 func CreateOtpResolver(p graphql.ResolveParams) (interface{}, error) {
 	email, ok := p.Args["email"].(string)
 	if !ok {
-		return nil, fmt.Errorf("Giá trị đầu vào không hợp lệ")
+		return nil, fmt.Errorf("giá trị đầu vào không hợp lệ")
 	}
 	resultAccount := configs.GetDB().Where("email = ?", email).First(&models.Account{})
 	if resultAccount.Error == nil {
-		return nil, fmt.Errorf("Email đã tồn tại")
+		return nil, fmt.Errorf("email đã tồn tại")
 	}
 	otp := helper.RandomNumber(6)
 	otpModel := models.Otp{
@@ -173,11 +173,11 @@ func CreateOtpResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 	resultOTP := configs.GetDB().Create(&otpModel)
 	if resultOTP.Error != nil {
-		return nil, fmt.Errorf("Tạo mã OTP không thành công")
+		return nil, fmt.Errorf("tạo mã OTP không thành công")
 	}
 	err := helper.SendMail(email, "Mã OTP", otp)
 	if err != nil {
-		return nil, fmt.Errorf("Gửi mail không thành công")
+		return nil, fmt.Errorf("gửi mail không thành công")
 	}
 	return map[string]interface{}{
 		"code": 200,

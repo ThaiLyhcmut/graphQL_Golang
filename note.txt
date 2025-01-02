@@ -6,3 +6,6 @@ go get github.com/joho/godotenv
 go get -u github.com/go-sql-driver/mysql
 go get -u gorm.io/gen
 
+go get -u golang.org/x/net
+go get -u golang.org/x/crypto
+go get -u gopkg.in/gomail.v2

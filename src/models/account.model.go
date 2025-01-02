@@ -19,7 +19,7 @@ type Account struct {
 	FullName       string       `gorm:"column:fullName"`                                                        // Cột fullName
 	Email          string       `gorm:"unique;column:email"`                                                    // Cột email và đảm bảo tính duy nhất
 	Password       string       `gorm:"column:password"`                                                        // Cột password
-	Status         string       `gorm:"column:status`                                                           // Cột status
+	Status         string       `gorm:"column:status;size:16"`                                                  // Cột status
 	Adress         string       `gorm:"column:adress"`                                                          // Cột adress
 	Phone          string       `gorm:"column:phone"`                                                           // Cột phone
 	Avatar         string       `gorm:"column:avatar"`                                                          // Cột avatar
