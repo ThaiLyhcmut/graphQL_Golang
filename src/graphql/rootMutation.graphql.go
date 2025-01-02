@@ -1,8 +1,8 @@
 package graphql_config
 
 import (
+	"ThaiLy/fields"
 	"ThaiLy/resolvers"
-	"ThaiLy/schemas"
 
 	"github.com/graphql-go/graphql"
 )
@@ -11,28 +11,28 @@ var rootMutation = graphql.ObjectConfig{
 	Name: "Mutation",
 	Fields: graphql.Fields{
 		"loginAccount": &graphql.Field{
-			Type: schemas.AccountType,
+			Type: fields.AccountType,
 			Args: graphql.FieldConfigArgument{
-				"account": &graphql.ArgumentConfig{Type: graphql.NewNonNull(schemas.LoginAccountInput)},
+				"account": &graphql.ArgumentConfig{Type: graphql.NewNonNull(fields.LoginAccountInput)},
 			},
 			Resolve: resolvers.LoginAccountResolver,
 		},
 		"registerAccount": &graphql.Field{
-			Type: schemas.AccountType,
+			Type: fields.AccountType,
 			Args: graphql.FieldConfigArgument{
-				"account": &graphql.ArgumentConfig{Type: graphql.NewNonNull(schemas.RegisterAccountInput)},
+				"account": &graphql.ArgumentConfig{Type: graphql.NewNonNull(fields.RegisterAccountInput)},
 			},
 			Resolve: resolvers.RegisterAccountResolver,
 		},
 		"updateAccount": &graphql.Field{
-			Type: schemas.AccountType,
+			Type: fields.AccountType,
 			Args: graphql.FieldConfigArgument{
-				"account": &graphql.ArgumentConfig{Type: schemas.UpdateAccountInput},
+				"account": &graphql.ArgumentConfig{Type: fields.UpdateAccountInput},
 			},
 			Resolve: resolvers.UpdateAccountResolver,
 		},
 		"createOtp": &graphql.Field{
-			Type: schemas.OTPType,
+			Type: fields.OTPType,
 			Args: graphql.FieldConfigArgument{
 				"email": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
 			},

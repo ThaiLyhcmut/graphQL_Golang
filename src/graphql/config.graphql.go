@@ -5,9 +5,12 @@ import (
 )
 
 func Config() *graphql.Schema {
+	// tạo 1 Schema mới
 	var config, _ = graphql.NewSchema(
+		// Tạo 1 Schema Config gồm các thành phần của Schema Như Query, Mutaion
 		graphql.SchemaConfig{
-			Query:    graphql.NewObject(rootQuery),
+			// Tạo thành
+			Query:    graphql.NewObject(rootQuery), // Mỗi cái này là các Object mới
 			Mutation: graphql.NewObject(rootMutation),
 		},
 	)

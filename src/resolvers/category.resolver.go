@@ -31,12 +31,16 @@ func GetCategoryResolver(p graphql.ResolveParams) (interface{}, error) {
 func GetProductByCategory(p graphql.ResolveParams) (interface{}, error) {
 	productInput, ok := p.Args["ProductInput"].(map[string]interface{})
 	offset, limit := 0, 10
+	var featured *string
 	if ok {
 		if offsetVal, ok := productInput["offset"].(int); ok {
 			offset = offsetVal
 		}
 		if limitVal, ok := productInput["limit"].(int); ok {
 			limit = limitVal
+		}
+		if featuredVal, ok := productInput["featured"].(string); ok {
+			featured = &featuredVal
 		}
 	}
 	category, ok := p.Source.(models.Category)
@@ -45,7 +49,14 @@ func GetProductByCategory(p graphql.ResolveParams) (interface{}, error) {
 	}
 	categoryID := category.ID
 	var products []models.Product
-	result := configs.DB.Where("CategoryID = ?", categoryID).Limit(limit).Offset(offset).Find(&products)
+	result := configs.DB.Where("CategoryID = ?", categoryID).Limit(limit).Offset(offset)
+	if featured != nil {
+		result = result.Where("featured = ?", *featured)
+	}
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	result = result.Find(&products)
 	if result.Error != nil {
 		return nil, result.Error
 	}

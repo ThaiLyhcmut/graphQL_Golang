@@ -1,8 +1,8 @@
 package graphql_config
 
 import (
+	"ThaiLy/fields"
 	"ThaiLy/resolvers"
-	"ThaiLy/schemas"
 
 	"github.com/graphql-go/graphql"
 )
@@ -11,11 +11,11 @@ var rootQuery = graphql.ObjectConfig{
 	Name: "RootQuery",
 	Fields: graphql.Fields{
 		"getAccount": &graphql.Field{
-			Type:    schemas.AccountType,
+			Type:    fields.AccountType,
 			Resolve: resolvers.GetAccountResolver,
 		},
 		"getCategory": &graphql.Field{
-			Type: graphql.NewList(schemas.CategoryType),
+			Type: graphql.NewList(fields.CategoryType),
 			Args: graphql.FieldConfigArgument{
 				"categoryID": &graphql.ArgumentConfig{Type: graphql.String},
 			},

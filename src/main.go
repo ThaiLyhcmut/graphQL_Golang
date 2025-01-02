@@ -29,7 +29,7 @@ func main() {
 
 	r.POST("/graphql", middlewares.RequireAuth, func(c *gin.Context) {
 		handler := handler.New(&handler.Config{
-			Schema: graphql_config.Config(),
+			Schema: graphql_config.Config(), // Schema cho API này
 		})
 		// Kiểm tra xem "account" có trong context không
 		account, exists := c.Get("account")

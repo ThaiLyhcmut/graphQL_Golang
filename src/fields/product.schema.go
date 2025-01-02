@@ -1,4 +1,4 @@
-package schemas
+package fields
 
 import "github.com/graphql-go/graphql"
 
@@ -23,7 +23,8 @@ var ProductType = graphql.NewObject(graphql.ObjectConfig{
 var ProductInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	Name: "ProductInput",
 	Fields: graphql.InputObjectConfigFieldMap{
-		"offset": &graphql.InputObjectFieldConfig{Type: graphql.Int},
-		"limit":  &graphql.InputObjectFieldConfig{Type: graphql.Int},
+		"offset":   &graphql.InputObjectFieldConfig{Type: graphql.Int},
+		"limit":    &graphql.InputObjectFieldConfig{Type: graphql.Int},
+		"featured": &graphql.InputObjectFieldConfig{Type: graphql.String},
 	},
 })
