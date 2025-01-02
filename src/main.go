@@ -5,8 +5,12 @@ import (
 	graphql_config "ThaiLy/graphql"
 	"ThaiLy/middlewares"
 	"context"
+	"fmt"
 	"log"
+	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/handler"
 	"github.com/joho/godotenv"
@@ -16,34 +20,44 @@ func main() {
 	// Set gin to release mode
 	gin.SetMode(gin.ReleaseMode)
 	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	// Load database
+	godotenv.Load()
+
+	fmt.Println("MySQL Name: ", os.Getenv("MYSQL_NAME"))
+	// Load database connection
 	configs.InitDB()
-	// Tạo gin
+
+	// Create Gin router
 	r := gin.Default()
 
-	// Tạo HTTP handler cho GraphQL
+	// CORS middleware setup
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // Chỉ cho phép origin cụ thể
+		AllowMethods:     []string{"POST"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
+	// GraphQL route
 	r.POST("/graphql", middlewares.RequireAuth, func(c *gin.Context) {
 		handler := handler.New(&handler.Config{
-			Schema: graphql_config.Config(), // Schema cho API này
+			Schema: graphql_config.Config(), // GraphQL schema
 		})
-		// Kiểm tra xem "account" có trong context không
+
+		// Checking if "account" exists in the context
 		account, exists := c.Get("account")
 		if exists {
-			// Tạo context mới và truyền thông tin tài khoản vào nếu có
+			// Create new context with account if available
 			ctx := context.WithValue(c.Request.Context(), "account", account)
 			c.Request = c.Request.WithContext(ctx)
 		}
 
-		// Tiến hành xử lý GraphQL request
+		// Process the GraphQL request
 		handler.ServeHTTP(c.Writer, c.Request)
 	})
 
-	// Khởi tạo server với Gin
+	// Start server on port 8080
 	log.Println("Server running at http://localhost:8080/graphql")
 	r.Run(":8080")
 }
